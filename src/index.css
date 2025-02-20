@@ -1,0 +1,28 @@
+/* import font from src/assets/fonts *//* FONTES */
+@font-face {
+  font-family: 'Exo';
+  src: url('assets/fonts/Exo\,Quicksand/Exo/Exo-VariableFont_wght.ttf') format('truetype');
+
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('assets/fonts/Exo\,Quicksand/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+
+}
+
+.title{
+  font-family: 'Exo', sans-serif !important;
+  font-weight: 300 !important;
+}
+
+.text{
+  font-family: 'Quicksand', sans-serif !important;
+  font-weight: 300 !important;
+}
+
+.text-small{
+  font-family: 'Quicksand', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 300 !important;
+}
