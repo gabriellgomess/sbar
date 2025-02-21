@@ -25,7 +25,7 @@ const RecordButton = ({ onMouseDown, onMouseUp, isRecording, disabled }) => {
                     Gravando <FontAwesomeIcon icon={faCircle} />
                 </Typography> : 
                 <Typography variant='caption' className="text-small">
-                    {disabled ? "Selecione um paciente" : "Gravar"} <FontAwesomeIcon icon={faMicrophone} />
+                    {disabled ? "Selecione o profisisonal e o paciente" : "Gravar"} <FontAwesomeIcon icon={faMicrophone} />
                 </Typography>
             }
         </Button>

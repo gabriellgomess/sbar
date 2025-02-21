@@ -2,34 +2,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import NavBar from "./components/NavBar/NavBar";
 import PassagemPlantao from './pages/PassagemPlantao';
 import Historico from './pages/Historico';
-import Login from './components/login'
+import Profissionais from './pages/Profissionais';
+import Pacientes from './pages/Pacientes';
+import Login from './components/login';
 import { Typography, CssBaseline, Box, Container } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
-import { PacientesProvider } from './components/PacientesContext/PacientesContext';
+import { MyProvider } from './components/MyContext/MyContext'; // Alteração aqui
 
-// const theme = createTheme({
-//   palette: {
-//     primary: {      
-//       main: '#00668c',     
-//       contrastText: '#fff',
-//     },
-//     secondary: {      
-//       main: '#cccbc8',     
-//       contrastText: '#000',
-//     },
-//     error: {
-//       main: '#c62828',
-//     },
-//     background: {
-//       default: '#f5f4f1',
-//       paper: '#d4eaf7',
-//     },
-//     text: {
-//       primary: '#1d1c1c',
-//       secondary: '#313d44',
-//     },
-//   },
-// });
 const theme = createTheme({
   palette: {
     primary: {      
@@ -58,16 +37,18 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <PacientesProvider>
+      <MyProvider> {/* Alteração aqui */}
         <NavBar />
         <Box sx={{ maxWidth: '95vw', margin: '0 auto' }}>
           <Routes>
             <Route path="/" element={<PassagemPlantao />} />
-            <Route path="/historico" element={<Historico />} />
+            <Route path="/linha-tempo" element={<Historico />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/profissionais" element={<Profissionais />} />
+            <Route path="/pacientes" element={<Pacientes />} />
           </Routes>
         </Box>
-      </PacientesProvider>
+      </MyProvider>
     </ThemeProvider>
   );
 }

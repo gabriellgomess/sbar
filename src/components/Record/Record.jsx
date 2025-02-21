@@ -2,19 +2,21 @@ import { useState, useRef, useContext } from "react";
 import { 
     Box, Button, Select, MenuItem, TextField, 
     FormControlLabel, Switch, Typography, FormControl, 
-    InputLabel, Snackbar, Alert, CircularProgress 
+    InputLabel, Snackbar, Alert, CircularProgress ,
+    Autocomplete
 } from "@mui/material";
 import axios from "axios";
 import RecordButton from "../RecordButtom/RecordButtom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import { PacientesContext } from "../PacientesContext/PacientesContext";
+import { MyContext } from "../MyContext/MyContext"; // Ajuste na importação
 
 const Record = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [audioBlob, setAudioBlob] = useState(null);
     const [audioURL, setAudioURL] = useState("");
     const [selectedPaciente, setSelectedPaciente] = useState("");
+    const [selectedProfissional, setSelectedProfissional] = useState("");
     const [textMessage, setTextMessage] = useState("");
     const [isAudioMode, setIsAudioMode] = useState(true);
     const [loading, setLoading] = useState(false);
@@ -22,7 +24,10 @@ const Record = () => {
 
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
-    const { pacientes, loading: loadingPacientes } = useContext(PacientesContext);
+
+    // Utilizando o novo contexto
+    const { pacientes, profissionais, loading: loadingPacientes, loadingProfissionais } = useContext(MyContext);
+
 
     const startRecording = async () => {
         if (!selectedPaciente) return;
@@ -78,8 +83,8 @@ const Record = () => {
         const formData = new FormData();
         formData.append("texto", textMessage || "");
         formData.append("paciente", selectedPaciente);
-        formData.append("usuario", "gabriel.gomes@outlook.com");
-        formData.append("nome", "Gabriel Gomes");
+        formData.append("usuario", selectedProfissional);
+        formData.append("nome", selectedProfissional);
 
         if (audioBlob) {
             const timestamp = new Date().toISOString().replace(/[-:T.]/g, "").slice(0, 14);
@@ -114,30 +119,27 @@ const Record = () => {
             <Typography variant="h4" className="title">Passagem de plantão</Typography>
             <Typography variant="body1" className="text">Selecione o paciente e grave sua mensagem ou escreva o texto.</Typography>
 
-            <FormControl fullWidth sx={{ maxWidth: 300 }}>
-                <InputLabel>Selecione o Paciente</InputLabel>
-                <Select
-                    value={selectedPaciente}
-                    onChange={(e) => setSelectedPaciente(e.target.value)}
-                    label="Selecione o Paciente"
-                    disabled={loadingPacientes}
-                >
-                    <MenuItem value=""><em>Selecione o paciente</em></MenuItem>
-                    {pacientes.map((paciente) => (
-                        <MenuItem key={paciente.id} value={paciente.id}>
-                            {paciente.nome}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+            <Autocomplete
+                disablePortal
+                options={pacientes}
+                getOptionLabel={(option) => option.nome} // Define o nome do paciente como label
+                value={pacientes.find((p) => p.id === selectedPaciente) || null} // Define o valor correto
+                onChange={(event, newValue) => setSelectedPaciente(newValue ? newValue.id : "")} // Atualiza o estado
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Selecione o Paciente" />}
+            />
 
-            {selectedPaciente && (
-                <Box sx={{ display: "flex", gap: 3 }}>
-                    <Typography variant="caption">Paciente: <span style={{ fontStyle: 'italic' }}>{pacientes.find(p => p.id === selectedPaciente)?.nome}</span></Typography>
-                    <Typography variant="caption">Sexo: <span style={{ fontStyle: 'italic' }}>{pacientes.find(p => p.id === selectedPaciente)?.sexo}</span></Typography>
-                    <Typography variant="caption">Nascimento: <span style={{ fontStyle: 'italic' }}>{pacientes.find(p => p.id === selectedPaciente)?.nascimento.split('-').reverse().join('/')}</span></Typography>
-                </Box>
-            )}
+            <Autocomplete
+                disablePortal
+                options={profissionais}
+                getOptionLabel={(option) => option.nome} // Define o nome do profissional como label
+                value={profissionais.find((p) => p.id === selectedProfissional) || null} // Define o valor correto
+                onChange={(event, newValue) => setSelectedProfissional(newValue ? newValue.id : "")} // Atualiza o estado
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Selecione o Profissional" />}
+            />
+
+            
 
             <FormControlLabel 
                 control={<Switch checked={isAudioMode} onChange={() => setIsAudioMode(!isAudioMode)} />} 
@@ -146,7 +148,7 @@ const Record = () => {
 
             {isAudioMode ? (
                 <Box sx={{ userSelect: "none", display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
-                    <RecordButton onMouseDown={startRecording} onMouseUp={stopRecording} isRecording={isRecording} disabled={!selectedPaciente || loading} />
+                    <RecordButton onMouseDown={startRecording} onMouseUp={stopRecording} isRecording={isRecording} disabled={(!selectedPaciente || !selectedProfissional) || loading} />
                     {audioURL && <audio controls src={audioURL} style={{ marginTop: 10 }} />}
                     {audioBlob && (
                         <Box display="flex" justifyContent="center" gap={1} mt={2}>

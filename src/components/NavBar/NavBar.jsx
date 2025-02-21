@@ -27,8 +27,8 @@ const navItems = [
   "url": "/"
   },
   {
-  "name": "Histórico",
-  "url": "/historico"
+  "name": "Linha do Tempo",
+  "url": "/linha-tempo"
   }
 ];
 
