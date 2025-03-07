@@ -26,3 +26,7 @@
   font-size: 12px !important;
   font-weight: 300 !important;
 }
+
+.swal2-custom-zindex {
+  z-index: 9999 !important;
+}

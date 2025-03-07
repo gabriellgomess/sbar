@@ -28,6 +28,8 @@ const Record = () => {
     // Utilizando o novo contexto
     const { pacientes, profissionais, loading: loadingPacientes, loadingProfissionais } = useContext(MyContext);
 
+    console.log("Pacientes:", pacientes);
+
 
     const startRecording = async () => {
         if (!selectedPaciente) return;
@@ -77,29 +79,35 @@ const Record = () => {
             setSnackbar({ open: true, message: "Nenhum dado para enviar!", severity: "warning" });
             return;
         }
-
+    
         setLoading(true);
-
+    
+        // Encontrar o paciente selecionado
+        const pacienteSelecionado = pacientes.find(p => p.id === selectedPaciente);
+    
         const formData = new FormData();
         formData.append("texto", textMessage || "");
         formData.append("paciente", selectedPaciente);
-        formData.append("usuario", selectedProfissional);
+        formData.append("profissional", selectedProfissional);
         formData.append("nome", selectedProfissional);
-
+    
+        // Adicionar o histórico do paciente, se existir
+        formData.append("historico", pacienteSelecionado?.historico || "");
+    
         if (audioBlob) {
             const timestamp = new Date().toISOString().replace(/[-:T.]/g, "").slice(0, 14);
             const audioFileName = `audio_${selectedPaciente}_${timestamp}.wav`;
             formData.append("audio", audioBlob, audioFileName);
             formData.append("path", "/public_html/audios/" + audioFileName);
         }
-
+    
         try {
             const response = await axios.post(
                 "https://n8n-n8n.rmmcki.easypanel.host/webhook/insere-dados",
                 formData,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
-
+    
             if (response.status === 200 && response.data.success) {
                 setSnackbar({ open: true, message: "Dados enviados com sucesso!", severity: "success" });
                 setTextMessage("");
@@ -113,22 +121,12 @@ const Record = () => {
             setLoading(false);
         }
     };
+    
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" gap={2} width="100%" sx={{ mt: 1, px: 2 }}>
             <Typography variant="h4" className="title">Passagem de plantão</Typography>
             <Typography variant="body1" className="text">Selecione o paciente e grave sua mensagem ou escreva o texto.</Typography>
-
-            <Autocomplete
-                disablePortal
-                options={pacientes}
-                getOptionLabel={(option) => option.nome} // Define o nome do paciente como label
-                value={pacientes.find((p) => p.id === selectedPaciente) || null} // Define o valor correto
-                onChange={(event, newValue) => setSelectedPaciente(newValue ? newValue.id : "")} // Atualiza o estado
-                sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="Selecione o Paciente" />}
-            />
-
             <Autocomplete
                 disablePortal
                 options={profissionais}
@@ -138,6 +136,15 @@ const Record = () => {
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="Selecione o Profissional" />}
             />
+            <Autocomplete
+                disablePortal
+                options={pacientes}
+                getOptionLabel={(option) => option.nome} // Define o nome do paciente como label
+                value={pacientes.find((p) => p.id === selectedPaciente) || null} // Define o valor correto
+                onChange={(event, newValue) => setSelectedPaciente(newValue ? newValue.id : "")} // Atualiza o estado
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Selecione o Paciente" />}
+            />         
 
             
 

@@ -17,7 +17,8 @@ const RecordButton = ({ onMouseDown, onMouseUp, isRecording, disabled }) => {
                 width: {xs: '260px', lg: '260px'}, 
                 height:{xs: '260px', lg: '260px'},
                 opacity: disabled ? 0.5 : 1,
-                cursor: disabled ? 'not-allowed' : 'pointer'
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                backgroundColor: isRecording ? '#f7cac9':'#f0f0f0',
             }}
         >                
             {isRecording ? 

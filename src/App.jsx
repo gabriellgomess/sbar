@@ -4,6 +4,7 @@ import PassagemPlantao from './pages/PassagemPlantao';
 import Historico from './pages/Historico';
 import Profissionais from './pages/Profissionais';
 import Pacientes from './pages/Pacientes';
+import ResumoIA from './pages/ResumoIA';
 import Login from './components/login';
 import { Typography, CssBaseline, Box, Container } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
@@ -46,6 +47,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/profissionais" element={<Profissionais />} />
             <Route path="/pacientes" element={<Pacientes />} />
+            <Route path="/resumo-ia" element={<ResumoIA />} />
           </Routes>
         </Box>
       </MyProvider>
