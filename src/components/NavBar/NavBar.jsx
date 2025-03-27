@@ -14,9 +14,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import { useAuth } from '../../contexts/AuthContext';
 
 import Logo from '../../assets/images/logo_horizontal.png';
 import LogoLight from '../../assets/images/logo_horizontal_light.png';
+import LogoSbar from '../../assets/images/logo_sbar_horizontal_color.png';
 
 import { Link } from 'react-router-dom';
 
@@ -35,6 +37,7 @@ const navItems = [
 function DrawerAppBar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const { logout, user } = useAuth();
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -75,7 +78,11 @@ function DrawerAppBar(props) {
           >
             <MenuIcon />
           </IconButton>
-          <img width={180} src={LogoLight} />
+          <Box sx={{ height: '70px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', gap: '15px' }}>
+            {/* <img style={{height: '100%'}}  src={LogoSbar} alt="" /> */}
+            <img style={{height: '80%'}}  src={LogoLight} />
+          </Box>
+          
           <Box sx={{ display: { xs: 'none', sm: 'block' , width: '100%' }, textAlign: 'right' }}>
             {navItems.map((item) => (
               <Button key={item} sx={{ color: '#fff' }} component={Link} to={item.url}>
@@ -83,6 +90,9 @@ function DrawerAppBar(props) {
               </Button>
             ))}
           </Box>
+          <Button onClick={logout} color="inherit">
+            Logout ({user?.name})
+          </Button>
         </Toolbar>
       </AppBar>
       <nav>

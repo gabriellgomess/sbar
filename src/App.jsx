@@ -1,14 +1,17 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { CssBaseline, Box } from '@mui/material';
+import { Routes, Route } from 'react-router-dom';
+import { MyProvider } from './components/MyContext/MyContext';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import NavBar from "./components/NavBar/NavBar";
+import Footer from "./components/Footer/Footer";
 import PassagemPlantao from './pages/PassagemPlantao';
 import Historico from './pages/Historico';
 import Profissionais from './pages/Profissionais';
 import Pacientes from './pages/Pacientes';
 import ResumoIA from './pages/ResumoIA';
-import Login from './components/login';
-import { Typography, CssBaseline, Box, Container } from '@mui/material';
-import { Routes, Route } from 'react-router-dom';
-import { MyProvider } from './components/MyContext/MyContext'; // Alteração aqui
+import Login from './pages/Login';
 
 const theme = createTheme({
   palette: {
@@ -38,19 +41,31 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <MyProvider> {/* Alteração aqui */}
-        <NavBar />
-        <Box sx={{ maxWidth: '95vw', margin: '0 auto' }}>
+      <AuthProvider>
+        <MyProvider>
           <Routes>
-            <Route path="/" element={<PassagemPlantao />} />
-            <Route path="/linha-tempo" element={<Historico />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/profissionais" element={<Profissionais />} />
-            <Route path="/pacientes" element={<Pacientes />} />
-            <Route path="/resumo-ia" element={<ResumoIA />} />
+            
+            <Route path="/" element={
+              <ProtectedRoute>
+                <>
+                  <NavBar />
+                  <Box sx={{ maxWidth: '95vw', margin: '0 auto' }}>
+                    <Routes>
+                      <Route index element={<PassagemPlantao />} />
+                      <Route path="/linha-tempo" element={<Historico />} />
+                      <Route path="/profissionais" element={<Profissionais />} />
+                      <Route path="/pacientes" element={<Pacientes />} />
+                      <Route path="/resumo-ia" element={<ResumoIA />} />
+                    </Routes>
+                  </Box>
+                  <Footer />
+                </>
+              </ProtectedRoute>
+            } />
           </Routes>
-        </Box>
-      </MyProvider>
+        </MyProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
